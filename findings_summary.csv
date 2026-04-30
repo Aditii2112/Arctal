@@ -1,0 +1,17 @@
+priority,check,issue,count,notes
+P1,Allocation reconciliation,Geographic allocations do not match issuance total,31,Sum(geo_allocations.allocation_USD) should equal issuances.total_USD_allocated per bond.
+P1,Allocation reconciliation,Category allocations do not match issuance total,30,Sum(cat_allocations.post_allocation_USD) should equal issuances.total_USD_allocated per bond.
+P1,Primary key completeness,Missing bond_id values,0,"Breakdown: {'issuances': np.int64(0), 'cat_allocations': np.int64(0), 'impacts': np.int64(0), 'geo_allocations': np.int64(0)}"
+P1,Primary key uniqueness,Duplicate bond_id in issuances,0,Bond-level table should contain one row per bond_id.
+P1,Referential integrity,Orphan bond_id in cat_allocations,0,Child table should not contain bond_id absent from issuances.
+P1,Referential integrity,Orphan bond_id in impacts,0,Child table should not contain bond_id absent from issuances.
+P1,Referential integrity,Orphan bond_id in geo_allocations,0,Child table should not contain bond_id absent from issuances.
+P1,Date quality,maturity_date earlier than placement_date,0,Chronological violation indicates source data error.
+P2,Impact quality,"Duplicate (bond_id, impact_metric) rows",50,May inflate metrics if data is aggregated without de-duplication.
+P2,Impact quality,Top 5% impact_per_million_USD outliers,47,Outliers may indicate unit mismatch or denominator issues.
+P2,Impact quality,Missing impact_per_million_USD,34,Missing normalized rates reduce comparability across bonds.
+P2,FX sanity,"Currencies with high implicit FX variability (std > 0.02, count >= 3)",3,"Potential stale rates, mixed valuation dates, or amount inconsistencies."
+P2,Date quality,Missing maturity_date,2,Maturity dates are required for tenor and duration analysis.
+P2,Impact quality,Negative impact values,2,Negative values are usually invalid depending on metric definition.
+P3,Coverage,Issuance bonds without impact records,5,"Could be normal for new bonds, but should be explicitly tracked."
+P3,Coverage,Issuance bonds without geographic allocation records,1,Could indicate delayed or incomplete reporting.
